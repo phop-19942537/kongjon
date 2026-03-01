@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>กองโจร บาคาร่า - DNA 32 MARTINGALE</title>
+    <title>กองโจร บาคาร่า - DNA 32</title>
     <style>
         :root {
             --bg-color: #0f172a;
@@ -21,7 +21,7 @@
             background: var(--bg-color); color: var(--text-main); 
             margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center;
         }
-        /* Navigation */
+
         .tabs { display: flex; width: 100%; max-width: 400px; gap: 8px; margin-bottom: 12px; }
         .tab-btn { flex: 1; padding: 12px; border: none; background: var(--card-bg); color: #94a3b8; cursor: pointer; border-radius: 12px; font-weight: bold; transition: 0.3s; }
         .tab-btn.active { background: var(--accent); color: #000; box-shadow: 0 4px 10px rgba(251, 192, 45, 0.3); }
@@ -29,32 +29,20 @@
         .container { width: 100%; max-width: 400px; display: none; }
         .container.active { display: block; }
         .card { background: var(--card-bg); border-radius: 20px; padding: 15px; border: 1px solid var(--border); margin-bottom: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
-        
-        /* Stats */
-        .header-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .stat-mini { background: #0f172a; padding: 10px; border-radius: 15px; text-align: center; border: 1px solid var(--border); }
-        .stat-mini small { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; }
-        .stat-mini div { font-size: 1.2rem; font-weight: 800; }
 
-        /* Prediction Area */
-        .prediction-zone { display: flex; align-items: center; gap: 15px; padding: 15px 0; min-height: 145px; }
-        .left-predict { width: 40%; display: flex; justify-content: center; border-right: 1px solid var(--border); }
-        .right-bet { width: 60%; text-align: center; }
-        
+        /* Prediction Center */
+        .prediction-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 180px; text-align: center; }
         .target-box-3d {
-            width: 90px; height: 90px; background: #1e293b; border-radius: 22px;
-            border: 1px solid rgba(255,255,255,0.1); box-shadow: 5px 5px 15px rgba(0,0,0,0.4);
+            width: 120px; height: 120px; background: #1e293b; border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 25px rgba(0,0,0,0.4);
             display: flex; align-items: center; justify-content: center;
             font-size: 50px; font-weight: 900; color: #334155;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform: perspective(500px) rotateX(10deg);
+            margin-bottom: 10px;
         }
-        .active-P-3d { background: linear-gradient(145deg, #3b82f6, #2563eb); color: #fff !important; transform: scale(1.05) rotateX(0); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4); }
-        .active-B-3d { background: linear-gradient(145deg, #ef4444, #dc2626); color: #fff !important; transform: scale(1.05) rotateX(0); box-shadow: 0 10px 20px rgba(239, 68, 68, 0.4); }
-        
-        .bet-label { font-size: 0.85rem; color: #94a3b8; }
-        .bet-amount { font-size: 2.8rem; font-weight: 900; color: var(--accent); display: none; margin: 5px 0; }
-        .bet-amount.show { display: block; animation: zoomIn 0.3s; }
+        .active-P-3d { background: linear-gradient(145deg, #3b82f6, #2563eb); color: #fff !important; transform: scale(1.1); box-shadow: 0 0 30px rgba(59, 130, 246, 0.5); }
+        .active-B-3d { background: linear-gradient(145deg, #ef4444, #dc2626); color: #fff !important; transform: scale(1.1); box-shadow: 0 0 30px rgba(239, 68, 68, 0.5); }
+        .status-text { font-size: 0.9rem; color: #94a3b8; font-weight: bold; }
 
         /* Grid */
         .grid-container {
@@ -76,49 +64,32 @@
         .btn-t { background: var(--t-color); font-size: 1.2rem; }
 
         .bottom-controls { display: flex; justify-content: center; gap: 15px; width: 100%; margin-top: 15px; }
-        .btn-mini { width: 80px; padding: 12px 0; border: none; border-radius: 12px; background: #334155; color: #f8fafc; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.05); }
-        .btn-reset { color: #f87171; border-color: rgba(239, 68, 68, 0.2); }
+        .btn-mini { width: 80px; padding: 12px 0; border: none; border-radius: 12px; background: #334155; color: #f8fafc; font-size: 0.75rem; font-weight: bold; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
 
-        /* Modals */
+        /* Settings Table */
+        .step-selector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
+        .step-item { 
+            background: #0f172a; border: 1px solid var(--border); padding: 12px 5px; 
+            border-radius: 10px; text-align: center; cursor: pointer; font-weight: bold;
+        }
+        .step-item.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(6px); }
         .overlay.active { display: flex; }
         .modal { background: var(--card-bg); width: 85%; max-width: 320px; padding: 25px; border-radius: 25px; text-align: center; border: 1px solid var(--border); }
-        .modal-btns { display: flex; gap: 10px; margin-top: 20px; }
-        .modal-btns button { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
-        
-        input { width: 100%; background: #0f172a; border: 1px solid var(--border); color: white; padding: 12px; border-radius: 12px; margin-top: 5px; font-size: 1rem; }
-        @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
+
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('scanner')">สแกน DNA</button>
-        <button class="tab-btn" onclick="switchTab('money')">ตั้งค่า</button>
+        <button class="tab-btn" onclick="switchTab('settings')">ตั้งค่าไม้ทบ</button>
     </div>
 
     <div id="scanner" class="container active">
-        <div class="header-stats">
-            <div class="stat-mini">
-                <small>กำไรสะสม</small>
-                <div id="top-bal" style="color:var(--t-color)">0</div>
-            </div>
-            <div class="stat-mini">
-                <small>WIN COUNT</small>
-                <div id="win-count" style="color:var(--accent)">0</div>
-            </div>
-        </div>
-
         <div class="card prediction-zone">
-            <div class="left-predict">
-                <div id="target" class="target-box-3d">?</div>
-            </div>
-            <div class="right-bet">
-                <span class="bet-label" id="step-info">กำลังวิเคราะห์...</span>
-                <div class="bet-amount" id="ui-bet">0</div>
-                <div id="ui-mode" style="font-size:0.75rem; margin-top:10px; color:#64748b;">
-                    ไม้ที่: <span id="ui-step">1</span> / <span id="ui-total-steps">4</span>
-                </div>
-            </div>
+            <div id="target" class="target-box-3d">?</div>
+            <div id="status-text" class="status-text"></div>
         </div>
 
         <div class="card" style="padding: 10px;">
@@ -133,59 +104,38 @@
         
         <div class="bottom-controls">
             <button class="btn-mini" onclick="undo()">ย้อนกลับ</button>
-            <button class="btn-mini btn-reset" onclick="showResetModal()">รีเซ็ต</button>
+            <button class="btn-mini" style="color:#f87171" onclick="showResetModal()">รีเซ็ต</button>
         </div>
     </div>
 
-    <div id="money" class="container">
+    <div id="settings" class="container">
         <div class="card">
-            <h4>เป้าหมายกำไร (Target)</h4>
-            <input type="number" id="profit-goal" placeholder="ใส่จำนวนเงินที่ต้องการ..." onchange="render()">
-            
-            <h4 style="margin-top:15px">ชุดทบเงิน (Martingale)</h4>
-            <p style="font-size: 0.7rem; color: #94a3b8; margin-bottom: 5px;">คั่นด้วยจุลภาค (,) เช่น 10,20,40,80</p>
-            <input type="text" id="money-seq" value="10,30,70,150" onchange="updateConfig()">
+            <h4 style="margin:0 0 10px 0; color:var(--accent)">เลือกจำนวนไม้ทบ (Martingale)</h4>
+            <div class="step-selector" id="step-selector">
+                </div>
+            <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 15px;">* ระบบจะเริ่มนับไม้ใหม่เมื่อชนะ หรือเมื่อทบจนครบจำนวนที่กำหนด</p>
         </div>
     </div>
 
     <div id="reset-modal" class="overlay">
         <div class="modal">
             <h2 style="color:#f87171">ล้างข้อมูล?</h2>
-            <p>ประวัติและสถิติทั้งหมดจะถูกเริ่มใหม่</p>
-            <div class="modal-btns">
-                <button style="background:#475569; color:white" onclick="closeModal('reset-modal')">ยกเลิก</button>
-                <button style="background:var(--b-color); color:white" onclick="confirmReset()">ล้างทั้งหมด</button>
+            <p>ประวัติการสแกนจะถูกเริ่มต้นใหม่</p>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button style="flex:1; padding:12px; border:none; border-radius:12px; background:#475569; color:white" onclick="closeModal()">ยกเลิก</button>
+                <button style="flex:1; padding:12px; border:none; border-radius:12px; background:var(--b-color); color:white" onclick="confirmReset()">ล้างทั้งหมด</button>
             </div>
-        </div>
-    </div>
-
-    <div id="goal-modal" class="overlay">
-        <div class="modal" style="border-color: var(--accent);">
-            <div style="font-size:50px;">🏆</div>
-            <h2 style="color:var(--accent)">ถึงเป้าหมาย!</h2>
-            <p>คุณทำกำไรครบตามที่ตั้งไว้แล้ว<br>ควรพักและถอนเงินออกก่อนครับ</p>
-            <button style="background:var(--t-color); color:white; width:100%; padding:12px; border:none; border-radius:12px; font-weight:bold;" onclick="closeModal('goal-modal')">รับทราบ</button>
         </div>
     </div>
 
 <script>
     let log = []; 
     let historyStack = [];
-    let moneySequence = [10, 30, 70, 150];
+    let maxSteps = 4;
     let profiles = [];
-    
-    // State สำหรับ Martingale
-    let state = { 
-        stepIdx: 0, 
-        bal: 0, 
-        wins: 0, 
-        isFound: false, 
-        aim: "", 
-        activeDNA: -1,
-        goalReached: false 
-    };
+    let state = { stepIdx: 0, isFound: false, aim: "", activeDNA: -1 };
 
-    // สร้าง DNA Profiles 32 ชุด (Binary 0-31)
+    // สร้าง DNA Profiles
     for(let i=0; i<32; i++) profiles.push(i.toString(2).padStart(5,'0').split('').map(b => b === '0' ? 'M' : 'T'));
 
     function switchTab(id) {
@@ -195,59 +145,39 @@
         event.currentTarget.classList.add('active');
     }
 
-    function updateConfig() {
-        let input = document.getElementById('money-seq').value;
-        moneySequence = input.split(',').map(v => parseFloat(v.trim()) || 0);
-        render();
-    }
-
-    function showResetModal() { document.getElementById('reset-modal').classList.add('active'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
-
-    function confirmReset() {
-        log = []; historyStack = [];
-        state = { stepIdx: 0, bal: 0, wins: 0, isFound: false, aim: "", activeDNA: -1, goalReached: false };
-        closeModal('reset-modal');
-        render();
+    function initStepSelector() {
+        const container = document.getElementById('step-selector');
+        container.innerHTML = "";
+        for(let i=1; i<=10; i++) {
+            const div = document.createElement('div');
+            div.className = `step-item ${i === maxSteps ? 'active' : ''}`;
+            div.innerText = i;
+            div.onclick = () => {
+                maxSteps = i;
+                if(state.stepIdx >= maxSteps) state.stepIdx = 0;
+                initStepSelector();
+                render();
+            };
+            container.appendChild(div);
+        }
     }
 
     function handleInput(v) {
-        // เก็บสถานะก่อนหน้าลง Stack (เพื่อ Undo)
         historyStack.push(JSON.stringify({ log: [...log], state: {...state} }));
 
-        // ถ้ามีการสแกนเจอจุดเข้า (Found) และผลที่ได้ไม่ใช่เสมอ (T)
         if (v !== 'T' && state.isFound && state.aim !== "") {
-            let betAmount = moneySequence[state.stepIdx] || 0;
-
             if (v === state.aim) {
-                // WIN: บวกเงิน, นับชนะ, กลับไปไม้ 1 (Index 0)
-                state.bal += betAmount;
-                state.wins++;
                 state.stepIdx = 0;
-                state.isFound = false; // ชนะแล้วต้องสแกนหาจุด ❌5 ใหม่
+                state.isFound = false; 
             } else {
-                // LOSE: ลบเงิน, ทบไม้ถัดไป
-                state.bal -= betAmount;
                 state.stepIdx++;
-                
-                // ถ้าแพ้จนเกินจำนวนไม้ทบที่มี ให้กลับไปเริ่มไม้ 1 ใหม่
-                if (state.stepIdx >= moneySequence.length) state.stepIdx = 0;
-                
-                state.isFound = false; // แพ้แล้วต้องรอสแกน ❌5 ใหม่ (หรือปรับตามสูตรกองโจร)
+                if (state.stepIdx >= maxSteps) state.stepIdx = 0;
+                state.isFound = false; 
             }
         }
 
-        // เพิ่มผลลงตาราง
         log.push(v);
         if (log.length > 72) log.shift();
-
-        // ตรวจสอบเป้าหมายกำไร
-        const goal = parseFloat(document.getElementById('profit-goal').value) || 0;
-        if (goal > 0 && state.bal >= goal && !state.goalReached) {
-            document.getElementById('goal-modal').classList.add('active');
-            state.goalReached = true;
-        }
-
         render();
     }
 
@@ -259,6 +189,15 @@
         } 
     }
 
+    function showResetModal() { document.getElementById('reset-modal').classList.add('active'); }
+    function closeModal() { document.getElementById('reset-modal').classList.remove('active'); }
+    function confirmReset() {
+        log = []; historyStack = [];
+        state = { stepIdx: 0, isFound: false, aim: "", activeDNA: -1 };
+        closeModal();
+        render();
+    }
+
     function render() {
         const grid = document.getElementById('grid');
         grid.innerHTML = "";
@@ -268,20 +207,15 @@
             grid.appendChild(d);
         }
 
-        document.getElementById('top-bal').innerText = state.bal.toLocaleString();
-        document.getElementById('top-bal').style.color = state.bal >= 0 ? 'var(--t-color)' : 'var(--b-color)';
-        document.getElementById('win-count').innerText = state.wins.toLocaleString();
-
         const targetUI = document.getElementById('target'), 
-              betUI = document.getElementById('ui-bet'), 
-              stepInfo = document.getElementById('step-info');
-
-        targetUI.className = "target-box-3d"; targetUI.innerText = "?";
-        betUI.classList.remove('show');
+              statusUI = document.getElementById('status-text');
+        
+        targetUI.className = "target-box-3d"; 
+        targetUI.innerText = "?";
 
         const clean = log.filter(x => x !== 'T');
 
-        // Logic สแกนหาจุดเข้า ❌5 (ผิดติดต่อกัน 5 ครั้งในประวัติ)
+        // Logic Scan ❌5
         if (clean.length >= 6 && !state.isFound) {
             for (let d = 0; d < 32; d++) {
                 let streak = 0;
@@ -298,29 +232,23 @@
             }
         }
 
-        // แสดงผลพยากรณ์ถ้าเจอจุดเข้า
         if (state.isFound && state.activeDNA !== -1) {
             let lastPrev = clean[clean.length-1];
             let bit = profiles[state.activeDNA][clean.length % 5];
             state.aim = (bit === 'M') ? lastPrev : (lastPrev === 'P' ? 'B' : 'P');
             
-            targetUI.innerText = state.aim; 
+            // แสดงไม้ที่ + ผลพยากรณ์ เช่น 1P, 2B
+            targetUI.innerText = (state.stepIdx + 1) + state.aim; 
             targetUI.classList.add(`active-${state.aim}-3d`);
-
-            let currentBet = moneySequence[state.stepIdx] || 0;
-            betUI.innerText = currentBet.toLocaleString();
-            betUI.classList.add('show');
-            stepInfo.innerText = "แนะนำเดิมพัน:";
+            statusUI.innerText = ""
         } else {
-            stepInfo.innerText = state.stepIdx > 0 ? `รอสแกนจุดเข้าใหม่ (ไม้ที่ ${state.stepIdx + 1})` : "รอข้อมูล (สแกนจุด ❌5)";
+            statusUI.innerText = state.stepIdx > 0 
+                ? `รอสแกนจุดเข้า (กำลังทบไม้ที่ ${state.stepIdx + 1})` 
+                : "รอข้อมูลสแกนจุดเข้า";
         }
-
-        // อัปเดตตัวเลขไม้
-        document.getElementById('ui-step').innerText = state.stepIdx + 1;
-        document.getElementById('ui-total-steps').innerText = moneySequence.length;
     }
 
-    // เริ่มต้นแสดงผล
+    initStepSelector();
     render();
 </script>
 </body>
