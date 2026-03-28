@@ -3,253 +3,349 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>กองโจร บาคาร่า - DNA 32</title>
+    <title>Logic Master Trio - Full History & Storage</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent: #fbc02d;
-            --p-color: #3b82f6;
-            --b-color: #ef4444;
-            --t-color: #22c55e;
-            --text-main: #f8fafc;
-            --border: #334155;
+            --bg: #000; --text: #fff; --box: #111; --border: #333;
+            --win: #2ecc71; --loss: #ff4444; --p-color: #0044ff; --b-color: #cc0000;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            background: var(--bg-color); color: var(--text-main); 
-            margin: 0; padding: 10px; display: flex; flex-direction: column; align-items: center;
-        }
+        .light-theme { --bg: #f0f2f5; --text: #1a1a1a; --box: #fff; --border: #d1d9e6; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--bg); color: var(--text); margin: 0; padding: 0; overflow-x: hidden; }
 
-        .tabs { display: flex; width: 100%; max-width: 400px; gap: 8px; margin-bottom: 12px; }
-        .tab-btn { flex: 1; padding: 12px; border: none; background: var(--card-bg); color: #94a3b8; cursor: pointer; border-radius: 12px; font-weight: bold; transition: 0.3s; }
-        .tab-btn.active { background: var(--accent); color: #000; box-shadow: 0 4px 10px rgba(251, 192, 45, 0.3); }
+        /* Header Control */
+        .global-header {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(10px);
+            padding: 8px; border-bottom: 2px solid #ffd700;
+            width: 100%; display: flex; flex-direction: column; align-items: center;
+        }
+        .main-btns { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; width: 100%; max-width: 400px; margin-bottom: 8px; }
+        .btn { padding: 12px 0; border: none; border-radius: 10px; font-size: 24px; font-weight: 900; color: #fff; cursor: pointer; }
+        .btn-p { background: var(--p-color); box-shadow: 0 4px 0 #002db3; }
+        .btn-t { background: var(--win); box-shadow: 0 4px 0 #1e8449; }
+        .btn-b { background: var(--b-color); box-shadow: 0 4px 0 #800000; }
+        .btn:active { transform: translateY(2px); box-shadow: none; }
         
-        .container { width: 100%; max-width: 400px; display: none; }
-        .container.active { display: block; }
-        .card { background: var(--card-bg); border-radius: 20px; padding: 15px; border: 1px solid var(--border); margin-bottom: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); }
+        .util-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; width: 100%; max-width: 400px; }
+        .btn-sub { padding: 8px 0; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; background: var(--box); color: var(--text); }
 
-        /* Prediction Center */
-        .prediction-zone { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 180px; text-align: center; }
-        .target-box-3d {
-            width: 120px; height: 120px; background: #1e293b; border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 50px; font-weight: 900; color: #334155;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            margin-bottom: 10px;
+        /* Sections */
+        .app-container { display: flex; flex-direction: column; width: 100%; align-items: center; }
+        .section { width: 100%; max-width: 400px; padding: 10px; border-bottom: 1px solid var(--border); }
+        .unit-info-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .unit-label { font-size: 14px; font-weight: 900; color: #ffd700; }
+        .unit-stats { font-size: 11px; font-weight: bold; cursor: pointer; border: 1px dashed #444; padding: 2px 5px; border-radius: 4px; }
+
+        .display-row { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+        .target-circle { 
+            width: 70px; height: 70px; border: 3px solid var(--border); border-radius: 50%; 
+            background: var(--box); display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; position: relative; flex-shrink: 0;
         }
-        .active-P-3d { background: linear-gradient(145deg, #3b82f6, #2563eb); color: #fff !important; transform: scale(1.1); box-shadow: 0 0 30px rgba(59, 130, 246, 0.5); }
-        .active-B-3d { background: linear-gradient(145deg, #ef4444, #dc2626); color: #fff !important; transform: scale(1.1); box-shadow: 0 0 30px rgba(239, 68, 68, 0.5); }
-        .status-text { font-size: 0.9rem; color: #94a3b8; font-weight: bold; }
+        .target-circle span { font-size: 26px; font-weight: 900; }
+        .dna-info { font-size: 9px; color: #888; position: absolute; bottom: 5px; }
+        .active-P { background: var(--p-color) !important; color: #fff !important; }
+        .active-B { background: var(--b-color) !important; color: #fff !important; }
 
-        /* Grid */
-        .grid-container {
-            display: grid; grid-template-rows: repeat(6, 1fr); grid-template-columns: repeat(12, 1fr);
-            grid-auto-flow: column; gap: 4px; background: #0f172a; padding: 10px;
-            border-radius: 12px; aspect-ratio: 12 / 6; width: 100%; border: 1px solid #334155;
-        }
-        .dot { width: 100%; aspect-ratio: 1/1; border-radius: 50%; background: #1e293b; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; border: 1px solid #334155; }
-        .dot.P { background: var(--p-color); color: white; border-color: #60a5fa; }
-        .dot.B { background: var(--b-color); color: white; border-color: #f87171; }
-        .dot.T { background: var(--t-color); color: white; border-color: #4ade80; }
+        .plate { flex-grow: 1; background: var(--box); border-radius: 8px; padding: 4px; border: 1px solid var(--border); }
+        .grid { display: grid; grid-template-rows: repeat(6, 1fr); grid-template-columns: repeat(12, 1fr); grid-auto-flow: column; gap: 2px; }
+        .dot { width: 100%; aspect-ratio: 1; border-radius: 50%; background: #222; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: #fff; }
+        .dot.P { background: var(--p-color); } .dot.B { background: var(--b-color); } .dot.T { background: var(--win); }
 
-        /* Buttons */
-        .btn-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 5px; }
-        .btn { padding: 20px; border: none; border-radius: 16px; font-size: 1.8rem; font-weight: 900; color: white; cursor: pointer; transition: 0.1s; }
-        .btn:active { transform: translateY(3px); }
-        .btn-p { background: var(--p-color); }
-        .btn-b { background: var(--b-color); }
-        .btn-t { background: var(--t-color); font-size: 1.2rem; }
+        .unit-actions { display: flex; gap: 6px; }
+        .mini-btn { flex: 1; background: var(--box); border: 1px solid var(--border); color: var(--text); padding: 5px 0; border-radius: 6px; font-size: 10px; cursor: pointer; font-weight: bold; }
+        .mini-btn.on { background: #00f2ff; color: #000; box-shadow: 0 0 10px rgba(0,242,255,0.5); }
 
-        .bottom-controls { display: flex; justify-content: center; gap: 15px; width: 100%; margin-top: 15px; }
-        .btn-mini { width: 80px; padding: 12px 0; border: none; border-radius: 12px; background: #334155; color: #f8fafc; font-size: 0.75rem; font-weight: bold; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
-
-        /* Settings Table */
-        .step-selector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 10px; }
-        .step-item { 
-            background: #0f172a; border: 1px solid var(--border); padding: 12px 5px; 
-            border-radius: 10px; text-align: center; cursor: pointer; font-weight: bold;
-        }
-        .step-item.active { background: var(--accent); color: #000; border-color: var(--accent); }
-
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(6px); }
-        .overlay.active { display: flex; }
-        .modal { background: var(--card-bg); width: 85%; max-width: 320px; padding: 25px; border-radius: 25px; text-align: center; border: 1px solid var(--border); }
+        /* Modals & Overlay */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--box); width: 90%; max-width: 300px; border-radius: 15px; padding: 20px; border: 1px solid var(--border); text-align: center; }
+        #historyOverlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: none; flex-direction: column; padding: 15px; }
+        .history-list { flex-grow: 1; overflow-y: auto; margin: 15px 0; }
+        .history-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #222; font-size: 13px; }
     </style>
 </head>
 <body>
 
-    <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('scanner')">สแกน DNA</button>
-        <button class="tab-btn" onclick="switchTab('settings')">ตั้งค่าไม้ทบ</button>
+<div class="global-header">
+    <div class="main-btns">
+        <button class="btn btn-p" onclick="globalInput('P')">P</button>
+        <button class="btn btn-t" onclick="globalInput('T')">T</button>
+        <button class="btn btn-b" onclick="globalInput('B')">B</button>
     </div>
-
-    <div id="scanner" class="container active">
-        <div class="card prediction-zone">
-            <div id="target" class="target-box-3d">?</div>
-            <div id="status-text" class="status-text"></div>
-        </div>
-
-        <div class="card" style="padding: 10px;">
-            <div id="grid" class="grid-container"></div>
-        </div>
-
-        <div class="btn-grid">
-            <button class="btn btn-p" onclick="handleInput('P')">P</button>
-            <button class="btn btn-t" onclick="handleInput('T')">T</button>
-            <button class="btn btn-b" onclick="handleInput('B')">B</button>
-        </div>
-        
-        <div class="bottom-controls">
-            <button class="btn-mini" onclick="undo()">ย้อนกลับ</button>
-            <button class="btn-mini" style="color:#f87171" onclick="showResetModal()">รีเซ็ต</button>
-        </div>
+    <div class="util-grid">
+        <button class="btn-sub" onclick="globalUndo()">↩ ย้อนกลับ</button>
+        <button class="btn-sub" onclick="toggleTheme()">🌓 เปลี่ยนธีม</button>
+        <button class="btn-sub" style="color:var(--loss);" onclick="globalReset()">🗑 ล้างทั้งหมด</button>
     </div>
+</div>
 
-    <div id="settings" class="container">
-        <div class="card">
-            <h4 style="margin:0 0 10px 0; color:var(--accent)">เลือกจำนวนไม้ทบ (Martingale)</h4>
-            <div class="step-selector" id="step-selector">
-                </div>
-            <p style="font-size: 0.75rem; color: #94a3b8; margin-top: 15px;">* ระบบจะเริ่มนับไม้ใหม่เมื่อชนะ หรือเมื่อทบจนครบจำนวนที่กำหนด</p>
+<div class="app-container">
+    <div id="app1" class="section">
+        <div class="unit-info-bar"><span class="unit-label">UNIT 1</span><span class="unit-stats" onclick="ctrl1.openHistory()">📜 WIN: <span class="winCount">0</span></span></div>
+        <div class="display-row">
+            <div class="target-circle target"><span class="targetText">-</span><div class="dna-info targetDna"></div></div>
+            <div class="plate"><div class="grid"></div></div>
+        </div>
+        <div class="unit-actions">
+            <button class="mini-btn superBtn" onclick="ctrl1.toggleSuperMode()">⚡ SUPER OFF</button>
+            <button class="mini-btn" onclick="ctrl1.openSetting()" style="color:#ffd700;">⚙ ตั้งค่า UNIT 1</button>
         </div>
     </div>
 
-    <div id="reset-modal" class="overlay">
-        <div class="modal">
-            <h2 style="color:#f87171">ล้างข้อมูล?</h2>
-            <p>ประวัติการสแกนจะถูกเริ่มต้นใหม่</p>
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button style="flex:1; padding:12px; border:none; border-radius:12px; background:#475569; color:white" onclick="closeModal()">ยกเลิก</button>
-                <button style="flex:1; padding:12px; border:none; border-radius:12px; background:var(--b-color); color:white" onclick="confirmReset()">ล้างทั้งหมด</button>
-            </div>
+    <div id="app2" class="section">
+        <div class="unit-info-bar"><span class="unit-label">UNIT 2</span><span class="unit-stats" onclick="ctrl2.openHistory()">📜 WIN: <span class="winCount">0</span></span></div>
+        <div class="display-row">
+            <div class="target-circle target"><span class="targetText">-</span><div class="dna-info targetDna"></div></div>
+            <div class="plate"><div class="grid"></div></div>
+        </div>
+        <div class="unit-actions">
+            <button class="mini-btn superBtn" onclick="ctrl2.toggleSuperMode()">⚡ SUPER OFF</button>
+            <button class="mini-btn" onclick="ctrl2.openSetting()" style="color:#ffd700;">⚙ ตั้งค่า UNIT 2</button>
         </div>
     </div>
+
+    <div id="app3" class="section">
+        <div class="unit-info-bar"><span class="unit-label">UNIT 3</span><span class="unit-stats" onclick="ctrl3.openHistory()">📜 WIN: <span class="winCount">0</span></span></div>
+        <div class="display-row">
+            <div class="target-circle target"><span class="targetText">-</span><div class="dna-info targetDna"></div></div>
+            <div class="plate"><div class="grid"></div></div>
+        </div>
+        <div class="unit-actions">
+            <button class="mini-btn superBtn" onclick="ctrl3.toggleSuperMode()">⚡ SUPER OFF</button>
+            <button class="mini-btn" onclick="ctrl3.openSetting()" style="color:#ffd700;">⚙ ตั้งค่า UNIT 3</button>
+        </div>
+    </div>
+</div>
+
+<div id="historyOverlay">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 id="histTitle">ประวัติ UNIT</h3>
+        <button onclick="closeHistory()" style="background:none; border:none; color:white; font-size:24px;">✕</button>
+    </div>
+    <div id="historyList" class="history-list"></div>
+    <button class="btn-sub" style="width:100%; color:var(--loss);" onclick="activeController.clearHistory()">ล้างประวัติชุดนี้</button>
+</div>
+
+<div id="mainSettingModal" class="modal" onclick="closeModals()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h4 id="settingTitle" style="margin:0 0 10px 0; color:#ffd700;">ตั้งค่า</h4>
+        <div style="display:grid; gap:8px;">
+            <button class="btn-sub" onclick="openSubModal('logicModal')">DNA: <span id="curDNA">2^7</span></button>
+            <button class="btn-sub" onclick="openSubModal('woodModal')">ไม้ทบ: <span id="curWood">6</span></button>
+            <button class="btn-sub" onclick="openSubModal('lvModal')">LV แม่นยำ: <span id="curLv">1</span></button>
+        </div>
+        <button class="btn-sub" style="margin-top:15px; width:100%; background:#ffd700; color:#000;" onclick="closeModals()">ปิด</button>
+    </div>
+</div>
+<div id="logicModal" class="modal" onclick="closeModals()"><div class="modal-content"><h4>เลือก DNA</h4><div id="dnaOptions" style="display:grid; grid-template-columns:1fr 1fr; gap:5px; max-height:200px; overflow-y:auto;"></div></div></div>
+<div id="lvModal" class="modal" onclick="closeModals()"><div class="modal-content"><h4>ระดับ LV</h4><div id="lvOptions" style="display:grid; grid-template-columns:repeat(3,1fr); gap:5px;"></div></div></div>
+<div id="woodModal" class="modal" onclick="closeModals()"><div class="modal-content"><h4>จำนวนไม้</h4><div id="woodOptions" style="display:grid; grid-template-columns:repeat(4,1fr); gap:5px;"></div></div></div>
 
 <script>
-    let log = []; 
-    let historyStack = [];
-    let maxSteps = 4;
-    let profiles = [];
-    let state = { stepIdx: 0, isFound: false, aim: "", activeDNA: -1 };
-
-    // สร้าง DNA Profiles
-    for(let i=0; i<32; i++) profiles.push(i.toString(2).padStart(5,'0').split('').map(b => b === '0' ? 'M' : 'T'));
-
-    function switchTab(id) {
-        document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        event.currentTarget.classList.add('active');
-    }
-
-    function initStepSelector() {
-        const container = document.getElementById('step-selector');
-        container.innerHTML = "";
-        for(let i=1; i<=10; i++) {
-            const div = document.createElement('div');
-            div.className = `step-item ${i === maxSteps ? 'active' : ''}`;
-            div.innerText = i;
-            div.onclick = () => {
-                maxSteps = i;
-                if(state.stepIdx >= maxSteps) state.stepIdx = 0;
-                initStepSelector();
-                render();
-            };
-            container.appendChild(div);
-        }
-    }
-
-    function handleInput(v) {
-        historyStack.push(JSON.stringify({ log: [...log], state: {...state} }));
-
-        if (v !== 'T' && state.isFound && state.aim !== "") {
-            if (v === state.aim) {
-                state.stepIdx = 0;
-                state.isFound = false; 
-            } else {
-                state.stepIdx++;
-                if (state.stepIdx >= maxSteps) state.stepIdx = 0;
-                state.isFound = false; 
-            }
-        }
-
-        log.push(v);
-        if (log.length > 72) log.shift();
-        render();
-    }
-
-    function undo() { 
-        if (historyStack.length > 0) { 
-            let last = JSON.parse(historyStack.pop()); 
-            log = last.log; state = last.state; 
-            render(); 
-        } 
-    }
-
-    function showResetModal() { document.getElementById('reset-modal').classList.add('active'); }
-    function closeModal() { document.getElementById('reset-modal').classList.remove('active'); }
-    function confirmReset() {
-        log = []; historyStack = [];
-        state = { stepIdx: 0, isFound: false, aim: "", activeDNA: -1 };
-        closeModal();
-        render();
-    }
-
-    function render() {
-        const grid = document.getElementById('grid');
-        grid.innerHTML = "";
-        for(let i=0; i<72; i++) {
-            const d = document.createElement('div'); d.className = 'dot';
-            if(log[i]) { d.className += ' ' + log[i]; d.innerText = log[i]; }
-            grid.appendChild(d);
-        }
-
-        const targetUI = document.getElementById('target'), 
-              statusUI = document.getElementById('status-text');
-        
-        targetUI.className = "target-box-3d"; 
-        targetUI.innerText = "?";
-
-        const clean = log.filter(x => x !== 'T');
-
-        // Logic Scan ❌5
-        if (clean.length >= 6 && !state.isFound) {
-            for (let d = 0; d < 32; d++) {
-                let streak = 0;
-                for (let r = 1; r < clean.length; r++) {
-                    let prev = clean[r-1], actual = clean[r], bit = profiles[d][r % 5];
-                    let predict = (bit === 'M') ? prev : (prev === 'P' ? 'B' : 'P');
-                    if (predict !== actual) streak++; else streak = 0;
-                }
-                if (streak === 5) { 
-                    state.isFound = true; 
-                    state.activeDNA = d; 
-                    break; 
-                }
-            }
-        }
-
-        if (state.isFound && state.activeDNA !== -1) {
-            let lastPrev = clean[clean.length-1];
-            let bit = profiles[state.activeDNA][clean.length % 5];
-            state.aim = (bit === 'M') ? lastPrev : (lastPrev === 'P' ? 'B' : 'P');
+    class LogicController {
+        constructor(id, label) {
+            this.id = id;
+            this.label = label;
+            this.container = document.getElementById(id);
             
-            // แสดงไม้ที่ + ผลพยากรณ์ เช่น 1P, 2B
-            targetUI.innerText = (state.stepIdx + 1) + state.aim; 
-            targetUI.classList.add(`active-${state.aim}-3d`);
-            statusUI.innerText = ""
-        } else {
-            statusUI.innerText = state.stepIdx > 0 
-                ? `รอสแกนจุดเข้า (กำลังทบไม้ที่ ${state.stepIdx + 1})` 
-                : "รอข้อมูลสแกนจุดเข้า";
+            const saved = JSON.parse(localStorage.getItem('v3_data_' + id)) || {};
+            this.log = saved.log || [];
+            this.winHistory = saved.winHistory || [];
+            this.selectedLv = saved.selectedLv || 1;
+            this.selectedWood = saved.selectedWood || 6;
+            this.currentExp = saved.currentExp || 7;
+            this.isSuperMode = saved.isSuperMode || false;
+            
+            this.currentStep = 0;
+            this.isFound = false;
+            this.aim = "";
+            this.isLoss = false;
+            this.lockedDNA = null;
+            this.dnaList = [5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+        }
+
+        save() {
+            const data = {
+                log: this.log,
+                winHistory: this.winHistory,
+                selectedLv: this.selectedLv,
+                selectedWood: this.selectedWood,
+                currentExp: this.currentExp,
+                isSuperMode: this.isSuperMode
+            };
+            localStorage.setItem('v3_data_' + this.id, JSON.stringify(data));
+        }
+
+        toggleSuperMode() {
+            this.isSuperMode = !this.isSuperMode;
+            this.lockedDNA = null;
+            this.save();
+            this.render();
+        }
+
+        processAdd(v) {
+            if (this.isFound && v !== 'T') {
+                const hData = { dna: this.lockedDNA || this.currentExp, time: new Date().toLocaleTimeString() };
+                if (v === this.aim) {
+                    hData.status = 'WIN'; hData.step = this.currentStep + 1;
+                    this.winHistory.unshift(hData);
+                    this.currentStep = 0; this.isFound = false; this.lockedDNA = null;
+                } else {
+                    this.currentStep++;
+                    if (this.currentStep >= this.selectedWood) {
+                        hData.status = 'LOSS'; hData.step = this.selectedWood;
+                        this.winHistory.unshift(hData);
+                        this.isLoss = true; this.currentStep = 0; this.isFound = false; this.lockedDNA = null;
+                    }
+                }
+            } else if (this.isLoss) { this.isLoss = false; }
+            this.log.push(v);
+            this.save();
+            this.render();
+        }
+
+        undo() {
+            this.log.pop();
+            this.currentStep = 0; this.isFound = false; this.lockedDNA = null; this.isLoss = false;
+            this.save();
+            this.render();
+        }
+
+        reset() {
+            this.log = []; this.winHistory = []; this.currentStep = 0; this.isFound = false; this.isLoss = false;
+            this.save(); this.render();
+        }
+
+        openHistory() {
+            activeController = this;
+            document.getElementById('histTitle').innerText = "ประวัติ UNIT " + this.label;
+            this.renderHistoryList();
+            document.getElementById('historyOverlay').style.display = 'flex';
+        }
+
+        renderHistoryList() {
+            document.getElementById('historyList').innerHTML = this.winHistory.map(h => `
+                <div class="history-item">
+                    <div><small>${h.time}</small> - DNA 2^${h.dna}</div>
+                    <div style="color:${h.status==='WIN'?'var(--win)':'var(--loss)'}">
+                        <b>${h.status==='WIN'?'ชนะ ไม้ '+h.step : 'แพ้ หลุด '+h.step}</b>
+                    </div>
+                </div>
+            `).join('') || '<div style="text-align:center; padding:20px; color:#666;">ไม่มีประวัติ</div>';
+        }
+
+        clearHistory() {
+            if(confirm("ล้างประวัติชุดนี้?")) { this.winHistory = []; this.save(); this.renderHistoryList(); this.render(); }
+        }
+
+        openSetting() {
+            activeController = this;
+            document.getElementById('settingTitle').innerText = "ตั้งค่า UNIT " + this.label;
+            document.getElementById('curDNA').innerText = `2^${this.currentExp}`;
+            document.getElementById('curWood').innerText = this.selectedWood;
+            document.getElementById('curLv').innerText = this.selectedLv;
+            document.getElementById('mainSettingModal').style.display = 'flex';
+        }
+
+        scanLogic(exp, cleanData) {
+            if (cleanData.length < 3) return null;
+            const limit = Math.min(Math.pow(2, exp), 1048576);
+            for (let d = 0; d < limit; d++) {
+                let streak = 0;
+                for (let r = 1; r < cleanData.length; r++) {
+                    let bit = (d >> (r % exp)) & 1;
+                    let predict = (bit === 0) ? cleanData[r-1] : (cleanData[r-1] === 'P' ? 'B' : 'P');
+                    if (predict !== cleanData[r]) streak++; else streak = 0;
+                }
+                if (streak - (exp - 1) >= this.selectedLv) {
+                    let nextBit = (d >> (cleanData.length % exp)) & 1;
+                    let last = cleanData[cleanData.length - 1];
+                    return (nextBit === 0) ? last : (last === 'P' ? 'B' : 'P');
+                }
+            }
+            return null;
+        }
+
+        render() {
+            const clean = this.log.filter(x => x !== 'T');
+            const target = this.container.querySelector('.target');
+            const targetText = this.container.querySelector('.targetText');
+            const targetDna = this.container.querySelector('.targetDna');
+            const superBtn = this.container.querySelector('.superBtn');
+            
+            superBtn.innerText = this.isSuperMode ? "⚡ SUPER ON" : "⚡ SUPER OFF";
+            superBtn.className = this.isSuperMode ? "mini-btn superBtn on" : "mini-btn superBtn";
+
+            target.className = "target-circle target"; 
+            if (this.isLoss) {
+                targetText.innerText = "L"; target.style.color = "var(--loss)";
+            } else {
+                if (clean.length >= 3) {
+                    if (this.isSuperMode && !this.lockedDNA) {
+                        for (let e of this.dnaList) {
+                            let res = this.scanLogic(e, clean);
+                            if (res) { this.lockedDNA = e; this.aim = res; this.isFound = true; break; }
+                        }
+                    } else {
+                        this.aim = this.scanLogic(this.lockedDNA || this.currentExp, clean);
+                        this.isFound = !!this.aim;
+                    }
+                }
+                if (this.isFound) {
+                    targetText.innerText = (this.currentStep + 1) + this.aim;
+                    target.classList.add(`active-${this.aim}`);
+                } else {
+                    targetText.innerText = "-"; target.style.color = "#444";
+                }
+                if (this.isFound || this.lockedDNA) targetDna.innerText = "2^" + (this.lockedDNA || this.currentExp);
+            }
+
+            const grid = this.container.querySelector('.grid');
+            grid.innerHTML = "";
+            this.log.slice(-72).forEach(v => { 
+                let d = document.createElement('div'); d.className = 'dot ' + v; d.innerText = v; grid.appendChild(d); 
+            });
+            for(let i=this.log.length; i<72; i++) grid.appendChild(document.createElement('div')).className='dot';
+
+            this.container.querySelector('.winCount').innerText = this.winHistory.filter(h => h.status === 'WIN').length;
         }
     }
 
-    initStepSelector();
-    render();
+    let activeController = null;
+    const ctrl1 = new LogicController('app1', '1');
+    const ctrl2 = new LogicController('app2', '2');
+    const ctrl3 = new LogicController('app3', '3');
+    const controllers = [ctrl1, ctrl2, ctrl3];
+
+    function globalInput(v) { controllers.forEach(c => c.processAdd(v)); }
+    function globalUndo() { controllers.forEach(c => c.undo()); }
+    function globalReset() { if(confirm("ล้างข้อมูลทั้งหมดรวมถึงประวัติ?")) controllers.forEach(c => c.reset()); }
+    function toggleTheme() { document.body.classList.toggle('light-theme'); }
+    function closeModals() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+    function openSubModal(id) { closeModals(); document.getElementById(id).style.display = 'flex'; }
+    function closeHistory() { document.getElementById('historyOverlay').style.display = 'none'; }
+
+    function initModals() {
+        const dnaOpts = document.getElementById('dnaOptions');
+        [5, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20].forEach(e => {
+            let b = document.createElement('button'); b.className='btn-sub'; b.innerText=`2^${e}`;
+            b.onclick=()=>{ activeController.currentExp=e; activeController.lockedDNA=null; activeController.save(); closeModals(); activeController.render(); };
+            dnaOpts.appendChild(b);
+        });
+        [1,2,3,4,5,6].forEach(v => {
+            let b = document.createElement('button'); b.className='btn-sub'; b.innerText=v;
+            b.onclick=()=>{ activeController.selectedLv=v; activeController.save(); closeModals(); activeController.render(); };
+            document.getElementById('lvOptions').appendChild(b);
+        });
+        [1,2,3,4,6,8,10,12].forEach(v => {
+            let b = document.createElement('button'); b.className='btn-sub'; b.innerText=v;
+            b.onclick=()=>{ activeController.selectedWood=v; activeController.save(); closeModals(); activeController.render(); };
+            document.getElementById('woodOptions').appendChild(b);
+        });
+    }
+
+    window.onload = () => { initModals(); controllers.forEach(c => c.render()); };
 </script>
 </body>
 </html>
