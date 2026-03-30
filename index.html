@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Logic Master Trio - Sync Undo Mode (Fixed)</title>
+    <title>Logic Master Trio - Sync Undo Mode (V2 Fixed)</title>
     <style>
         :root {
             --bg: #000; --text: #fff; --box: #111; --border: #333;
@@ -24,7 +24,6 @@
         .btn-t { background: var(--win); box-shadow: 0 4px 0 #1e8449; }
         .btn-b { background: var(--b-color); box-shadow: 0 4px 0 #800000; }
         .btn:active { transform: translateY(2px); box-shadow: none; }
-        
         .util-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; width: 100%; max-width: 400px; }
         .btn-sub { padding: 8px 0; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; background: var(--box); color: var(--text); }
         .app-container { display: flex; flex-direction: column; width: 100%; align-items: center; }
@@ -160,7 +159,6 @@
         }
 
         processAdd(v) {
-            // ถ้ากด T ให้ข้ามการประมวลผล Logic แพ้ชนะ แต่บันทึกลง Log
             if (v === 'T') {
                 this.log.push(v);
                 this.save();
@@ -179,12 +177,11 @@
                     if (this.currentStep >= this.selectedWood) {
                         hData.status = 'LOSS'; hData.step = this.selectedWood;
                         this.winHistory.unshift(hData);
-                        this.isLoss = true; // ตั้งสถานะแพ้ (L)
+                        this.isLoss = true; 
                         this.currentStep = 0; this.isFound = false; this.lockedDNA = null;
                     }
                 }
             } else if (this.isLoss) {
-                // ถ้าติด L อยู่ แล้วมีการป้อน P หรือ B รอบใหม่ ให้ล้างสถานะ L เพื่อเริ่มสแกนใหม่
                 this.isLoss = false;
             }
 
@@ -196,10 +193,21 @@
         undo() {
             if (this.log.length === 0) return;
             const lastInput = this.log.pop();
+            
+            // ถ้าลบผลที่ไม่ใช่ T และมีประวัติบันทึกไว้ ให้ลบประวัติล่าสุดออก
             if (lastInput !== 'T' && this.winHistory.length > 0) {
                 this.winHistory.shift(); 
             }
-            this.currentStep = 0; this.isFound = false; this.lockedDNA = null; this.isLoss = false;
+
+            // จุดแก้ไขสำคัญ: เช็คสถานะประวัติล่าสุดที่เหลืออยู่
+            // หากประวัติบนสุดตอนนี้เป็น LOSS ให้ตั้งค่าแสดงผลเป็น L เหมือนเดิม
+            if (this.winHistory.length > 0 && this.winHistory[0].status === 'LOSS') {
+                this.isLoss = true;
+            } else {
+                this.isLoss = false;
+            }
+
+            this.currentStep = 0; this.isFound = false; this.lockedDNA = null;
             this.save();
             this.render();
         }
@@ -221,7 +229,6 @@
             target.className = "target-circle target"; 
 
             if (this.isLoss) {
-                // แสดง L และหยุดการพยากรณ์จนกว่าจะมีการป้อนข้อมูลที่ไม่ใช่ T ในตาหน้า
                 targetText.innerText = "L"; 
                 target.style.color = "var(--loss)";
                 targetDna.innerText = "";
